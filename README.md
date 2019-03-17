@@ -1,2 +1,2 @@
 # little-schemer
-Examples and exercies from The Little Schemer
+Examples and exercies from The Little Schemer.
