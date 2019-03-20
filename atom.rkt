@@ -24,4 +24,3 @@
 
 (member? 'a '(b c a))
 (member? 'a '(b c ab))
-                   
