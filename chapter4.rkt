@@ -1,7 +1,25 @@
 #lang racket
-(define atom?
-  (lambda (x)
-    (and (not (pair? x)) (not (null? x)))))
+
+(require "atom.rkt")
+
+(provide +
+         -
+         addtup
+         multiply
+         tup+
+         >
+         <
+         =
+         ^
+         length
+         pick
+         rempick
+         no-nums
+         all-nums
+         eqan?
+         occur
+         one?
+         rempick2)
 
 (define +
   (lambda (x y)
@@ -106,8 +124,7 @@
       ((and (number? a1) (number? a2)) (= a1 a2))
       ((or (number? a1) (number? a2)) #f)
       (else (eq? a1 a2)))))
-      
-      
+
 (define occur
   (lambda (a lat)
     (cond
@@ -127,46 +144,46 @@
              (car lat)
              (rempick2 (sub1 n) (cdr lat)))))))
 
-
-(add1 1)
-(sub1 4)
-(zero? 0)
-(zero? 2)
-(+ 46 12)
-(- 46 12)
-(addtup '(1 2 3))
-(multiply 3 4)
-(tup+ '(1 2 3) '(4 5 6))
-(tup+ '(1 2) '(4 5 6))
-(tup+ '(1 2 3) '(5 6))
-(> 10 20)
-(> 15 7)
-(> 3 3)
-(< 10 20)
-(< 15 7)
-(< 3 3)
-(= 10 20)
-(= 15 7)
-(= 3 3)
-(^ 1 1)
-(^ 2 3)
-(^ 5 3)
-(length '(a b c d e f))
-(length '())
-(length '(a b))
-(pick 4 '(a b c d e f))
-(pick 1 '(a b c d e f))
-(rempick 4 '(a b c d e f))
-(rempick 1 '(a b c d e f))
-(no-nums '(a 1 b 2 c 3 d e))
-(all-nums '(a 1 b 2 c 3 d e))
-(eqan? 1 2)
-(eqan? 1 1)
-(eqan? 1 'a)
-(eqan? 'a 'b)
-(eqan? 'a 'a)
-(occur 1 '(a f 2 1 j 3 1))
-(one? 1)
-(one? 12)
-(rempick2 4 '(a b c d e f))
-(rempick2 1 '(a b c d e f))
+(module+ test
+  (add1 1)
+  (sub1 4)
+  (zero? 0)
+  (zero? 2)
+  (+ 46 12)
+  (- 46 12)
+  (addtup '(1 2 3))
+  (multiply 3 4)
+  (tup+ '(1 2 3) '(4 5 6))
+  (tup+ '(1 2) '(4 5 6))
+  (tup+ '(1 2 3) '(5 6))
+  (> 10 20)
+  (> 15 7)
+  (> 3 3)
+  (< 10 20)
+  (< 15 7)
+  (< 3 3)
+  (= 10 20)
+  (= 15 7)
+  (= 3 3)
+  (^ 1 1)
+  (^ 2 3)
+  (^ 5 3)
+  (length '(a b c d e f))
+  (length '())
+  (length '(a b))
+  (pick 4 '(a b c d e f))
+  (pick 1 '(a b c d e f))
+  (rempick 4 '(a b c d e f))
+  (rempick 1 '(a b c d e f))
+  (no-nums '(a 1 b 2 c 3 d e))
+  (all-nums '(a 1 b 2 c 3 d e))
+  (eqan? 1 2)
+  (eqan? 1 1)
+  (eqan? 1 'a)
+  (eqan? 'a 'b)
+  (eqan? 'a 'a)
+  (occur 1 '(a f 2 1 j 3 1))
+  (one? 1)
+  (one? 12)
+  (rempick2 4 '(a b c d e f))
+  (rempick2 1 '(a b c d e f)))

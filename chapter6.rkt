@@ -1,7 +1,14 @@
 #lang racket
-(define atom?
-  (lambda (x)
-    (and (not (pair? x)) (not (null? x)))))
+
+(require "atom.rkt"
+         "chapter4.rkt")
+
+(provide numbered?
+         value
+         1st-sub-exp
+         2nd-sub-exp
+         operator
+         value-prefix)
 
 (define numbered?
   (lambda (aexp)
@@ -10,19 +17,6 @@
       (else (and
              (numbered? (car aexp))
              (numbered? (car (cdr (cdr aexp)))))))))
-
-(define multiply
-  (lambda (x y)
-    (cond
-      ((zero? y) 0)
-      (else
-       (+ x (multiply x (sub1 y)))))))
-
-(define ^
-  (lambda (x y)
-    (cond
-      ((zero? y) 1)
-      (else (multiply x (^ x (sub1 y)))))))
 
 (define value
   (lambda (nexp)
@@ -52,15 +46,14 @@
       ((eq? (operator nexp) 'x) (multiply (value-prefix (1st-sub-exp nexp)) (value-prefix (2nd-sub-exp nexp))))
       ((eq? (operator nexp) '^) (^ (value-prefix (1st-sub-exp nexp)) (value-prefix (2nd-sub-exp nexp)))))))
 
-(numbered? '(1 + 3))
-(numbered? '(1 + (3 x 4)))
-(numbered? '(1 + cat))
-(numbered? '1)
-
-(value '(1 + 3))
-(value '(1 + (3 x 4)))
-(value '(1 + (3 ^ 4)))
-(value '1)
-
-(value-prefix '(+ 1 3))
-(value-prefix '(+ 1 (x 4 3)))
+(module+ test
+  (numbered? '(1 + 3))
+  (numbered? '(1 + (3 x 4)))
+  (numbered? '(1 + cat))
+  (numbered? '1)
+  (value '(1 + 3))
+  (value '(1 + (3 x 4)))
+  (value '(1 + (3 ^ 4)))
+  (value '1)
+  (value-prefix '(+ 1 3))
+  (value-prefix '(+ 1 (x 4 3))))

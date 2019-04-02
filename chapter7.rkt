@@ -1,7 +1,9 @@
 #lang racket
-(require "chapter5.rkt")
 
-(println "Begin Chapter 7")
+(require "atom.rkt"
+         "chapter5.rkt")
+
+(provide set?)
 
 (define member?
   (lambda (a lat)
@@ -16,8 +18,9 @@
       ((null? lat) #t)
       ((member? (car lat) (cdr lat)) #f)
       (else (set? (cdr lat))))))
-      
-(set? '(a b c))
-(set? '(a b c a))
-(set? '(a b 1 c 2 1))
-(set? '(a b 1 c 2))
+
+(module+ test
+  (set? '(a b c))
+  (set? '(a b c a))
+  (set? '(a b 1 c 2 1))
+  (set? '(a b 1 c 2)))
