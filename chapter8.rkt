@@ -16,7 +16,13 @@
          insertL
          insertR
          subst
-         value)
+         value
+         multirember-f
+         multiremberT
+         multiinsertLR
+         multiinsertLR&co
+         evens-only*
+         evens-only*&co)
 
 (define rember-f-orig
   (lambda (test? a l)
@@ -129,6 +135,87 @@
       (else (cons (car lat)
                   (multiremberT test? (cdr lat)))))))
 
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+      ((null? lat) '())
+      ((eq? (car lat) oldL)
+       (cons new
+             (cons oldL
+                   (multiinsertLR new oldL oldR
+                                 (cdr lat)))))
+      ((eq? (car lat) oldR)
+       (cons oldR
+             (cons new
+                   (multiinsertLR new oldL oldR
+                                  (cdr lat)))))
+      (else (cons (car lat)
+                  (multiinsertLR new oldL oldR
+                                 (cdr lat)))))))
+      
+
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat) (col '() 0 0))
+      ((eq? (car lat) oldL)
+       (multiinsertLR&co new oldL oldR
+                         (cdr lat)
+                         (lambda (newlat nL nR)
+                           (col (cons new (cons oldL newlat))
+                                (add1 nL)
+                                nR))))
+      ((eq? (car lat) oldR)
+       (multiinsertLR&co new oldL oldR
+                         (cdr lat)
+                         (lambda (newlat nL nR)
+                           (col (cons oldR (cons new newlat))
+                                nL
+                                (add1 nR)))))
+      (else (multiinsertLR&co new oldL oldR
+                              (cdr lat)
+                              (lambda (newlat nL nR)
+                                (col (cons (car lat) newlat)
+                                     nL
+                                     nR)))))))
+(define even?
+  (lambda (n)
+    (= (* (quotient n 2) 2) n)))
+
+(define evens-only*
+  (lambda (l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (cons (car l) (evens-only* (cdr l))))
+         (else (evens-only* (cdr l)))))
+      (else (cons (evens-only* (car l))
+                  (evens-only* (cdr l)))))))
+
+(define evens-only*&co
+  (lambda (l col)
+    (cond
+      ((null? l) (col '() 1 0))
+      ((atom? (car l))
+       (cond
+         ((even? (car l))
+          (evens-only*&co (cdr l)
+                          (lambda (newl p s)
+                            (col (cons (car l) newl)
+                                 (* (car l) p) s))))
+         (else (evens-only*&co (cdr l)
+                               (lambda (newl p s)
+                                 (col newl p
+                                      (+ (car l) s)))))))
+       (else (evens-only*&co (car l)
+                             (lambda (al ap as)
+                               (evens-only*&co (cdr l)
+                                               (lambda (dl dp ds)
+                                                 (col (cons al dl)
+                                                      (* ap dp)
+                                                      (+ as ds))))))))))
+
 (module+ test
   (rember-f-orig eq? 'b '(a b c))
   (rember-f-orig eqan? '2 '(1 2 3 a b c))
@@ -143,4 +230,8 @@
   ((insert-g seqL) '44 '(a b) '(1 (2 3) (a b) c))
   ((insert-g seqR) '44 '(a b) '(1 (2 3) (a b) c))
   (multiremberT (eq?-c '2) '(1 2 3 4 1 2 3 4))
+  (multiinsertLR 'katt 'L 'R '(1 L 3 R 1 L 3 4))
+  (multiinsertLR&co 'katt 'L 'R '(1 L 3 R 1 L 3 4) (lambda (newlat nL nR) nL))
+  (evens-only* '(1 2 (3 4) (5) 6))
+  (evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (newl p s) (cons s (cons p newl))))
   )
